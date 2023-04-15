@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         binding.ivVolume.setImageResource(R.drawable.ic_volume_on)
                     }
+
                 }
 
                 binding.frame.listener = object : ExoPlayerHelper.Listener {
@@ -70,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         adapter.addAll(getSampleData())

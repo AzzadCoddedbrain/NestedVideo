@@ -23,13 +23,31 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+<!--
+
+            <ImageButton android:id="@id/exo_play"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:background="@drawable/player_circle_background"
+                style="@style/ExoMediaButton.Play"/>
+
+            <ImageButton android:id="@id/exo_pause"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:background="@drawable/player_circle_background"
+                style="@style/ExoMediaButton.Pause"/>
+-->
+
+            <ImageButton
+                android:layout_gravity="center"
                 android:id="@+id/ivVolume"
+                style="@style/ExoMediaButton.Pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#80FFFFFF"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_volume_on" />
+                android:background="@drawable/player_circle_background"
+                android:padding="20dp" />
         </FrameLayout>
     </LinearLayout>
 </layout>

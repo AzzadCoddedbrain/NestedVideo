@@ -3,23 +3,42 @@ package com.example.masterexoplayer.nested
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.masterexoplayer.AppPreferences
 import com.example.masterexoplayer.Model
 import com.example.masterexoplayer.R
+import com.example.masterexoplayer.databinding.ActivityMainBinding
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.master.exoplayer.MasterExoPlayerHelper
+import com.master.exoplayer.MuteStrategy
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivityNested : AppCompatActivity() {
 
     lateinit var masterExoPlayerHelper: MasterExoPlayerHelper
 
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    val save = AppPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
-        masterExoPlayerHelper = MasterExoPlayerHelper(mContext = this, id = R.id.frame)
+        masterExoPlayerHelper = MasterExoPlayerHelper(mContext = this, id = R.id.frame, useController = true, defaultMute = false, muteStrategy = MuteStrategy.ALL)
         masterExoPlayerHelper.makeLifeCycleAware(this)
+
         setAdapter()
         masterExoPlayerHelper.attachToRecyclerView(recyclerView)
+
+
+        masterExoPlayerHelper.getPlayerView().apply {
+            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            useController = true
+        }
+
+
     }
 
 
