@@ -26,19 +26,11 @@ class MainActivityNested : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        masterExoPlayerHelper = MasterExoPlayerHelper(mContext = this, id = R.id.frame, useController = true, defaultMute = false, muteStrategy = MuteStrategy.ALL)
+        masterExoPlayerHelper = MasterExoPlayerHelper(mContext = this, id = R.id.frame , muteStrategy=MuteStrategy.ALL )
         masterExoPlayerHelper.makeLifeCycleAware(this)
 
         setAdapter()
         masterExoPlayerHelper.attachToRecyclerView(recyclerView)
-
-
-        masterExoPlayerHelper.getPlayerView().apply {
-            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-            useController = true
-        }
-
-
     }
 
 
