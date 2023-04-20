@@ -30,7 +30,6 @@
                 android:background="@drawable/player_circle_background"
                 android:padding="8dp"
                 android:layout_gravity="center"
-                android:backgroundTint="@color/design_default_color_primary"
                 app:srcCompat="@drawable/ic_volume_on" />
 
         </FrameLayout>

@@ -1,5 +1,8 @@
 package com.example.masterexoplayer.nested
 
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,163 +15,179 @@ import com.master.exoplayer.MasterExoPlayerHelper
 import com.master.exoplayer.MuteStrategy
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivityNested : AppCompatActivity() {
 
     lateinit var masterExoPlayerHelper: MasterExoPlayerHelper
 
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     val save = AppPreferences
+
+
+    var isMute: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        masterExoPlayerHelper = MasterExoPlayerHelper(mContext = this, id = R.id.frame , muteStrategy=MuteStrategy.ALL )
+        masterExoPlayerHelper = MasterExoPlayerHelper(mContext = this,id = R.id.frame,muteStrategy = MuteStrategy.ALL, defaultMute = isMute, autoPlay = true)
+
         masterExoPlayerHelper.makeLifeCycleAware(this)
 
         setAdapter()
         masterExoPlayerHelper.attachToRecyclerView(recyclerView)
+
+        masterExoPlayerHelper.getPlayerView().apply {
+            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+        }
+
+
+
+
     }
+
+
 
 
     fun setAdapter() {
-        val adapter = PostAdapter(getSampleData(), masterExoPlayerHelper)
+        val adapter = PostAdapter(getSampleData(), masterExoPlayerHelper,isMute)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
     }
+
 
     fun getSampleData(): ArrayList<Model> {
         return arrayListOf<Model>(
             Model().apply {
                 title = "Big Buck Bunny"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "Multiple Video Right Swipe to see"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
                 sourcesList = arrayOf(Model().apply {
                     title = "Big Buck Bunny"
                     sources =
-                        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                        "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                     thumb =
-                        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
+                        "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
                 },
                     Model().apply {
                         title = "Elephant Dream"
                         sources =
-                            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                            "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                         thumb =
-                            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg"
+                            "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
                         sourcesList = arrayOf()
                     })
             },
             Model().apply {
                 title = "Image Only"
-                sources = ""
+                sources =
+                    ""
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
 
             },
             Model().apply {
                 title = "For Bigger Blazes"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "For Bigger Escape"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "For Bigger Fun"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "For Bigger Joyrides"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
                 sourcesList = arrayOf(Model().apply {
                     title = "Big Buck Bunny"
                     sources =
-                        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+                        "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                     thumb =
-                        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg"
+                        "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
                 },
                     Model().apply {
                         title = "Elephant Dream"
                         sources =
-                            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                            "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                         thumb =
-                            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg"
+                            "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
                         sourcesList = arrayOf()
                     })
             },
             Model().apply {
                 title = "For Bigger Meltdowns"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "Sintel"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "Subaru Outback On Street And Dirt"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "Tears of Steel"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "Volkswagen GTI Review"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "We Are Going On Bullrun"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             },
             Model().apply {
                 title = "What care can you get for a grand?"
                 sources =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4"
+                    "https://media.nojoto.com/content/media/28619628/2023/04/feed/dd80ff4079297899fa055ccc0f764c2b/dd80ff4079297899fa055ccc0f764c2b_default.mp4"
                 thumb =
-                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg"
+                    "https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg"
             }
         )
     }
