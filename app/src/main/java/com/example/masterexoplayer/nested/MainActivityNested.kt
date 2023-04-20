@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.masterexoplayer.AppPreferences
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivityNested : AppCompatActivity() {
 
     lateinit var masterExoPlayerHelper: MasterExoPlayerHelper
+
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
@@ -43,16 +45,16 @@ class MainActivityNested : AppCompatActivity() {
             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         }
 
-
-
-
     }
 
 
-
-
     fun setAdapter() {
-        val adapter = PostAdapter(getSampleData(), masterExoPlayerHelper,isMute)
+        val adapter = PostAdapter(getSampleData(), masterExoPlayerHelper,isMute,object:PostAdapter.BtnClickListener{
+            override fun onBtnClick(position: Model) {
+                Toast.makeText(binding.root.context, "your current - >"+position.title, Toast.LENGTH_SHORT).show()
+            }
+
+        })
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
     }

@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +20,11 @@ import com.example.masterexoplayer.databinding.NestedItemPlayerBinding
 import com.master.exoplayer.ExoPlayerHelper
 import com.master.exoplayer.MasterExoPlayerHelper
 import com.simpleadapter.SimpleAdapter
+import kotlinx.android.synthetic.main.item.view.*
 import kotlin.collections.ArrayList
 
 
-class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterExoPlayerHelper, isMute: Boolean) : RecyclerView.Adapter<PostAdapter.MyViewHolder>() {
+class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterExoPlayerHelper, isMute: Boolean, val btnlistener: BtnClickListener) : RecyclerView.Adapter<PostAdapter.MyViewHolder>() {
 
     val TYPE_SINGLE = 1
     val TYPE_MULTIPLE = 2
@@ -30,32 +32,22 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
 
     var isVideoMute=isMute
 
+    companion object {
+        var mClickListener: BtnClickListener? = null
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         when (viewType) {
             TYPE_SINGLE -> {
-                return SingleViewHolder(
-                    ItemBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                )
+                return SingleViewHolder(ItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             TYPE_IMAGE -> {
-                return ImageViewHolder(
-                    ItemImageBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                )
+                return ImageViewHolder(ItemImageBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             else -> {
                 return MultipleViewHolder(
-                    ItemNestedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                ).apply {
-                    masterExoPlayerHelper.attachToRecyclerView(binding.recyclerView)
-                }
+                    ItemNestedBinding.inflate(LayoutInflater.from(parent.context), parent, false)).apply { masterExoPlayerHelper.attachToRecyclerView(binding.recyclerView) }
             }
         }
     }
@@ -76,17 +68,34 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val model = list.get(holder.adapterPosition)
+        mClickListener = btnlistener
+
+
+//        holder.itemView.setOnClickListener(object :View.OnClickListener{
+//            override fun onClick(v: View?) {
+//                mClickListener?.onBtnClick(holder.adapterPosition)
+//            }
+//
+//        })
+
+
         holder.onBind(model,isVideoMute)
     }
 
-    abstract class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    abstract class MyViewHolder(view: View) : RecyclerView.ViewHolder(view){
         abstract fun onBind(model: Model, isVideoMute: Boolean);
 
     }
 
-    class SingleViewHolder(val binding: ItemBinding) : MyViewHolder(binding.root) {
+    class SingleViewHolder(val binding: ItemBinding) : MyViewHolder(binding.root){
+
 
         override fun onBind(model: Model, isVideoMute: Boolean) {
+
+//            init {
+//                itemView.setOnClickListener(this)
+//            }
+//
             binding.text.text = model.title
             binding.frame.url = model.sources
             binding.frame.imageView = binding.image
@@ -94,12 +103,16 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
 
             binding.image.load(retriveVideoFrameFromVideo(model.sources))
 
-            binding.frame.isMute = isVideoMute
-
+            if (binding.frame.isMute){
+                binding.ivVolume.visibility = View.GONE
+            }else{
+                binding.ivVolume.visibility = View.VISIBLE
+            }
             // single video
             binding.frame.setOnClickListener {
-                val handler = Handler()
-                handler.postDelayed({binding.ivVolume.visibility=View.INVISIBLE }, 1000)
+
+                mClickListener?.onBtnClick(model)
+
 
                 if (binding.frame.isMute) {
                     binding.ivVolume.visibility =View.VISIBLE
@@ -109,6 +122,10 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
                     binding.ivVolume.visibility =View.VISIBLE
                 }
                  binding.frame.isMute = !binding.frame.isMute
+
+                val handler = Handler()
+                handler.postDelayed({binding.ivVolume.visibility=View.INVISIBLE }, 1000)
+
             }
         }
 
@@ -131,12 +148,16 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
             }
             return bitmap
         }
+
     }
 
     class ImageViewHolder(val binding: ItemImageBinding) : MyViewHolder(binding.root) {
         override fun onBind(model: Model, isVideoMute: Boolean) {
             binding.text.text = model.title
             binding.image.load(model.thumb)
+            binding.root.setOnClickListener({
+                mClickListener?.onBtnClick(model)
+            })
         }
     }
 
@@ -151,12 +172,18 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
 //                    binding.image.load(model.thumb)
                     binding.image.load(retriveVideoFrameFromVideo(model.sources))
 
+                    if (binding.frame.isMute){
+                        binding.ivVolume.visibility = View.GONE
+                    }else{
+                        binding.ivVolume.visibility = View.VISIBLE
+                    }
+
                     binding.frame.setOnClickListener {
 
-                        val handler = Handler()
-                        handler.postDelayed({binding.ivVolume.visibility=View.INVISIBLE }, 1000)
+                        mClickListener?.onBtnClick(model)
 
                         binding.frame.isMute = !binding.frame.isMute
+
 
                         if (binding.frame.isMute) {
                             binding.ivVolume.visibility =View.VISIBLE
@@ -165,6 +192,9 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
                             binding.ivVolume.setImageResource(R.drawable.ic_volume_on)
                             binding.ivVolume.visibility =View.VISIBLE
                         }
+
+                        val handler = Handler()
+                        handler.postDelayed({binding.ivVolume.visibility=View.INVISIBLE }, 1000)
 
                     }
 
@@ -232,6 +262,8 @@ class PostAdapter(val list: ArrayList<Model>, val masterExoPlayerHelper: MasterE
 
 
     }
-
+    open interface BtnClickListener {
+        fun onBtnClick(position: Model)
+    }
 }
 
